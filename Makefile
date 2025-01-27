@@ -30,7 +30,7 @@ clean:
 	rm -rf kernel/Cargo.lock
 	mkdir target
 
-run-elf: target/kernel.elf
+run-kernel: target/kernel.elf
 	qemu-system-i386 -kernel '$<'
 
 run: target/main.iso
