@@ -13,7 +13,12 @@ make run-kernel # run kernel
 
 ## Roadmap
 
-<ul><li>- [x] </li></ul> Hello World
+- [x] Hello World
+- [ ] Keyboard
+- [ ] Mouse
+- [ ] Time
+- [ ] Video graphics
+- [ ] Audio
 
 ### Resources
 
