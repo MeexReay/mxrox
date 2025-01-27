@@ -1,5 +1,5 @@
 [package]
-name = "kernel"
+name = "mxrox_kernel"
 version = "0.1.0"
 edition = "2021"
 

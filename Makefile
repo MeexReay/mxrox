@@ -1,37 +1,38 @@
-.PHONY: clean run run-iso target_dir
+.PHONY: clean run run-iso bin_dir
 
-target/main.iso: target/kernel.elf target_dir
-	cp 'src/grub.cfg' target/iso/boot/grub
-	cp '$<' target/iso/boot
-	grub-mkrescue -o '$@' target/iso
+bin/main.iso: bin/kernel.elf bin_dir
+	cp 'grub.cfg' bin/iso/boot/grub
+	cp '$<' bin/iso/boot
+	grub-mkrescue -o '$@' bin/iso
 
-target/boot.o: src/boot.s target_dir
+bin/boot.o: boot.s bin_dir
 	nasm -f elf32 '$<' -o '$@'
 
-target/kernel.elf: src/linker.ld target/boot.o target/kernel.o
+bin/kernel.elf: linker.ld bin/boot.o bin/kernel.o
 	i686-elf-ld -m elf_i386 -nostdlib -o '$@' -T $^
 
-target/kernel.o: kernel/ target_dir
-	cd kernel && cargo build --release
-	cp kernel/target/x86-unknown-bare_metal/release/deps/kernel-*.o target/kernel.o
+bin/kernel.o: bin_dir
+	rustup override set nightly
+	cargo build --release
+	cp target/x86-unknown-bare_metal/release/deps/mxrox_kernel-*.o $@
 
-target_dir:
-	mkdir -p target
-	mkdir -p target/iso
-	mkdir -p target/iso/lib
-	mkdir -p target/iso/boot
-	mkdir -p target/iso/boot/grub
+bin_dir:
+	mkdir -p bin
+	mkdir -p bin/iso
+	mkdir -p bin/iso/lib
+	mkdir -p bin/iso/boot
+	mkdir -p bin/iso/boot/grub
 
-build: target/main.iso
+build: bin/main.iso
 
 clean:
+	rm -rf bin
 	rm -rf target
-	rm -rf kernel/target
-	rm -rf kernel/Cargo.lock
-	mkdir target
+	rm -rf Cargo.lock
+	mkdir bin
 
-run-kernel: target/kernel.elf
+run-kernel: bin/kernel.elf
 	qemu-system-i386 -kernel '$<'
 
-run: target/main.iso
+run: bin/main.iso
 	qemu-system-i386 -cdrom '$<'
