@@ -6,7 +6,7 @@ Mixray's small OS
 
 ```bash
 make clean      # removes target/, kernel/target/, kernel/Cargo.lock
-make build      # builds iso image
+make build      # builds iso image build/mxrox.iso
 make run        # run iso image
 make run-kernel # run kernel
 ```

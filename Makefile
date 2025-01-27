@@ -1,38 +1,38 @@
-.PHONY: clean run run-iso bin_dir
+.PHONY: clean run run-iso build_dir
 
-bin/mxrox.iso: bin/kernel.elf bin_dir
-	cp 'grub.cfg' bin/iso/boot/grub
-	cp '$<' bin/iso/boot
-	grub-mkrescue -o '$@' bin/iso
+build/mxrox.iso: build/kernel.elf build_dir
+	cp 'grub.cfg' build/iso/boot/grub
+	cp '$<' build/iso/bootmxrox
+	grub-mkrescue -o '$@' build/iso
 
-bin/boot.o: boot.s bin_dir
+build/boot.o: boot.s build_dir
 	nasm -f elf32 '$<' -o '$@'
 
-bin/kernel.elf: linker.ld bin/boot.o bin/kernel.o
+build/kernel.elf: linker.ld build/boot.o build/kernel.o
 	i686-elf-ld -m elf_i386 -nostdlib -o '$@' -T $^
 
-bin/kernel.o: bin_dir
+build/kernel.o: build_dir
 	rustup override set nightly
 	cargo build --release
 	cp target/x86-unknown-bare_metal/release/deps/mxrox_kernel-*.o $@
 
-bin_dir:
-	mkdir -p bin
-	mkdir -p bin/iso
-	mkdir -p bin/iso/lib
-	mkdir -p bin/iso/boot
-	mkdir -p bin/iso/boot/grub
+build_dir:
+	mkdir -p build
+	mkdir -p build/iso
+	mkdir -p build/iso/lib
+	mkdir -p build/iso/boot
+	mkdir -p build/iso/boot/grub
 
-build: bin/mxrox.iso
+build: build/mxrox.iso
 
 clean:
-	rm -rf bin
+	rm -rf build
 	rm -rf target
 	rm -rf Cargo.lock
-	mkdir bin
+	mkdir build
 
-run-kernel: bin/kernel.elf
+run-kernel: build/kernel.elf
 	qemu-system-i386 -kernel '$<'
 
-run: bin/main.iso
+run: build/main.iso
 	qemu-system-i386 -cdrom '$<'
