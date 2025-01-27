@@ -34,5 +34,5 @@ clean:
 run-kernel: build/kernel.elf
 	qemu-system-i386 -kernel '$<'
 
-run: build/main.iso
+run: build/mxrox.iso
 	qemu-system-i386 -cdrom '$<'
