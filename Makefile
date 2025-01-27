@@ -1,6 +1,6 @@
 .PHONY: clean run run-iso bin_dir
 
-bin/main.iso: bin/kernel.elf bin_dir
+bin/mxrox.iso: bin/kernel.elf bin_dir
 	cp 'grub.cfg' bin/iso/boot/grub
 	cp '$<' bin/iso/boot
 	grub-mkrescue -o '$@' bin/iso
@@ -23,7 +23,7 @@ bin_dir:
 	mkdir -p bin/iso/boot
 	mkdir -p bin/iso/boot/grub
 
-build: bin/main.iso
+build: bin/mxrox.iso
 
 clean:
 	rm -rf bin
