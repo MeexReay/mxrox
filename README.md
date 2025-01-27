@@ -5,10 +5,10 @@ Mixray's small OS
 ## How to use
 
 ```bash
-make clean      # removes target/, kernel/target/, kernel/Cargo.lock
-make build      # build iso image (build/mxrox.iso)
-make run        # run iso image
-make run-kernel # run kernel
+make clean      # removes target/, bin/, Cargo.lock
+make build      # builds iso image (build/mxrox.iso)
+make run        # runs iso image
+make run-kernel # runs only kernel
 ```
 
 ## Roadmap
