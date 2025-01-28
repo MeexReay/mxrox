@@ -28,7 +28,7 @@ Internet resources where I found most information about OS dev
 - https://github.com/cirosantilli/x86-bare-metal-examples/tree/master/multiboot/hello-world
 - http://wiki.osdev.org/Bare_Bones
 - https://gitea.bedohswe.eu.org/bedohswe/bootsector_tictactoe/
-- https://wiki.osdev.org/%228042%22_PS/2_Controller
+- https://wiki.osdev.org/PS/2
 - https://os.phil-opp.com/
 
 ### Contributing
