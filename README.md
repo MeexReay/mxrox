@@ -1,21 +1,22 @@
 # MxRox
 
-Mixray's small OS
+Mixray's small x86_64 OS
 
-## How to use
+## How to build
 
 ```bash
-make clean      # removes target/, bin/, Cargo.lock
+make clean      # removes target/
 make build      # builds iso image (build/mxrox.iso)
-make run        # runs iso image
-make run-kernel # runs only kernel
+make run        # runs iso image in QEMU emulator
+make run-kernel # runs only kernel in QEMU emulator
 ```
 
 ## Roadmap
 
 - [x] Hello World
-- [ ] Keyboard
-- [ ] Mouse
+- [ ] Keyboard & Mouse (PS/2)
+- [ ] ACPI
+- [ ] Threads
 - [ ] Time
 - [ ] Video graphics
 - [ ] Audio
@@ -27,7 +28,8 @@ Internet resources where I found most information about OS dev
 - https://github.com/cirosantilli/x86-bare-metal-examples/tree/master/multiboot/hello-world
 - http://wiki.osdev.org/Bare_Bones
 - https://gitea.bedohswe.eu.org/bedohswe/bootsector_tictactoe/
-
+- https://wiki.osdev.org/%228042%22_PS/2_Controller
+- https://os.phil-opp.com/
 
 ### Contributing
 
