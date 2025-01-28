@@ -2,7 +2,7 @@
 
 build/mxrox.iso: build/kernel.elf build_dir
 	cp 'grub.cfg' build/iso/boot/grub
-	cp '$<' build/iso/bootmxrox
+	cp '$<' build/iso/boot
 	grub-mkrescue -o '$@' build/iso
 
 build/boot.o: boot.s build_dir
@@ -19,7 +19,6 @@ build/kernel.o: build_dir
 build_dir:
 	mkdir -p build
 	mkdir -p build/iso
-	mkdir -p build/iso/lib
 	mkdir -p build/iso/boot
 	mkdir -p build/iso/boot/grub
 
@@ -27,8 +26,8 @@ build: build/mxrox.iso
 
 clean:
 	rm -rf build
-	rm -rf target
-	rm -rf Cargo.lock
+#	rm -rf target
+#	rm -rf Cargo.lock
 	mkdir build
 
 run-kernel: build/kernel.elf

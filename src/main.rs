@@ -10,24 +10,20 @@ use core::panic::PanicInfo;
 use core::sync::atomic;
 use core::sync::atomic::Ordering;
 
+use kernel::{start_kernel, show_error};
+
+mod kernel;
 
 #[inline(never)]
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    loop {
-        atomic::compiler_fence(Ordering::SeqCst);
-    }
+fn panic(info: &PanicInfo) -> ! {
+    show_error(info.message().as_str().unwrap_or("mxrox death"));
+    loop {}
 }
 
 
-mod terminal;
-
-use terminal::{fill, put_string, VgaColor};
-
 #[no_mangle]
 fn main() -> ! {
-    fill(' ', VgaColor::BLACK, VgaColor::BLACK);
-    put_string(0, 0, "Hello World from MxRox!", VgaColor::BLACK, VgaColor::WHITE);
-
+    start_kernel();
     loop {}
 }
