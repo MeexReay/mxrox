@@ -9,7 +9,7 @@ build/boot.o: boot.s build_dir
 	nasm -f elf32 '$<' -o '$@'
 
 build/kernel.elf: linker.ld build/boot.o build/kernel.o
-	i686-elf-ld -m elf_i386 -nostdlib -o '$@' -T $^
+	i686-elf-ld -m elf_i386 -o '$@' -T $^
 
 build/kernel.o: build_dir
 	rustup override set nightly
@@ -26,8 +26,8 @@ build: build/mxrox.iso
 
 clean:
 	rm -rf build
-#	rm -rf target
-#	rm -rf Cargo.lock
+	rm -rf target
+#   rm -rf Cargo.lock
 	mkdir build
 
 run-kernel: build/kernel.elf

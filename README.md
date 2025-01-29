@@ -5,7 +5,7 @@ Mixray's small x86_64 OS
 ## How to build
 
 ```bash
-make clean      # removes target/
+make clean      # removes target/, build/
 make build      # builds iso image (build/mxrox.iso)
 make run        # runs iso image in QEMU emulator
 make run-kernel # runs only kernel in QEMU emulator

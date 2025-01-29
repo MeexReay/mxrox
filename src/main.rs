@@ -8,7 +8,7 @@ extern "C" fn eh_personality() {}
 
 use core::panic::PanicInfo;
 
-use kernel::{start_kernel, show_error};
+use kernel::{init_kernel, show_error};
 
 mod kernel;
 
@@ -19,9 +19,8 @@ fn panic(info: &PanicInfo) -> ! {
     loop {}
 }
 
-
 #[no_mangle]
-extern "C" fn main() -> ! {
-    start_kernel();
+pub extern "C" fn main() -> ! {
+    init_kernel();
     loop {}
 }
