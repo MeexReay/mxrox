@@ -36,7 +36,9 @@ impl FreeListAllocator {
 
         *self.head.get() = first_node;
     }
+}
 
+unsafe impl GlobalAlloc for FreeListAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
         let mut prev: *mut FreeListNode = null_mut();
         let mut current = *self.head.get();
@@ -94,16 +96,6 @@ impl FreeListAllocator {
 
 #[global_allocator]
 static ALLOCATOR: FreeListAllocator = FreeListAllocator::new();
-
-unsafe impl GlobalAlloc for FreeListAllocator {
-    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        self.alloc(layout)
-    }
-
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
-        self.dealloc(ptr, layout)
-    }
-}
 
 #[no_mangle]
 pub extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {

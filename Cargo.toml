@@ -1,10 +1,17 @@
+[lib]
+crate-type = ["staticlib"]
+
 [package]
-name = "mxrox_kernel"
+name = "mxrox"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-x86_64 = "0.15.2"
-volatile = "0.6.1"
 stable-vec = "0.4.1"
-spin = "0.9"
+no-std-compat = {version = "0.4.1", features = ["alloc"]}
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
