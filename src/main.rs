@@ -7,8 +7,6 @@
 extern "C" fn eh_personality() {}
 
 use core::panic::PanicInfo;
-use core::sync::atomic;
-use core::sync::atomic::Ordering;
 
 use kernel::{start_kernel, show_error};
 
@@ -23,7 +21,7 @@ fn panic(info: &PanicInfo) -> ! {
 
 
 #[no_mangle]
-fn main() -> ! {
+extern "C" fn main() -> ! {
     start_kernel();
     loop {}
 }

@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 x86_64 = "0.15.2"
 volatile = "0.6.1"
+stable-vec = "0.4.1"

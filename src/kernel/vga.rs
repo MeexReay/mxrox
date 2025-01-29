@@ -1,28 +1,26 @@
+use core::ptr::write_volatile;
+
 const VGA_BUFFER: *mut u16 = 0xB8000 as *mut u16;
 
 pub const VGA_WIDTH: usize = 80;
 pub const VGA_HEIGHT: usize = 25;
 
-pub struct VgaColor(u8);
-
-impl VgaColor {
-    pub const BLACK: u8 = 0;
-    pub const BLUE: u8 = 1;
-    pub const GREEN: u8 = 2;
-    pub const CYAN: u8 = 3;
-    pub const RED: u8 = 4;
-    pub const MAGENTA: u8 = 5;
-    pub const BROWN: u8 = 6;
-    pub const LIGHT_GREY: u8 = 7;
-    pub const DARK_GREY: u8 = 8;
-    pub const LIGHT_BLUE: u8 = 9;
-    pub const LIGHT_GREEN: u8 = 10;
-    pub const LIGHT_CYAN: u8 = 11;
-    pub const LIGHT_RED: u8 = 12;
-    pub const LIGHT_MAGENTA: u8 = 13;
-    pub const LIGHT_BROWN: u8 = 14;
-    pub const WHITE: u8 = 15;
-}
+pub const VGA_COLOR_BLACK: u8 = 0;
+pub const VGA_COLOR_BLUE: u8 = 1;
+pub const VGA_COLOR_GREEN: u8 = 2;
+pub const VGA_COLOR_CYAN: u8 = 3;
+pub const VGA_COLOR_RED: u8 = 4;
+pub const VGA_COLOR_MAGENTA: u8 = 5;
+pub const VGA_COLOR_BROWN: u8 = 6;
+pub const VGA_COLOR_LIGHT_GREY: u8 = 7;
+pub const VGA_COLOR_DARK_GREY: u8 = 8;
+pub const VGA_COLOR_LIGHT_BLUE: u8 = 9;
+pub const VGA_COLOR_LIGHT_GREEN: u8 = 10;
+pub const VGA_COLOR_LIGHT_CYAN: u8 = 11;
+pub const VGA_COLOR_LIGHT_RED: u8 = 12;
+pub const VGA_COLOR_LIGHT_MAGENTA: u8 = 13;
+pub const VGA_COLOR_LIGHT_BROWN: u8 = 14;
+pub const VGA_COLOR_WHITE: u8 = 15;
 
 pub fn put_char_by_index(index: usize, c: char, bg: u8, fg: u8) {
     let c16 = c as u16;
@@ -30,7 +28,7 @@ pub fn put_char_by_index(index: usize, c: char, bg: u8, fg: u8) {
     let color16 = color as u16;
 
     unsafe {
-        ptr::write_volatile(VGA_BUFFER.add(index), c16 | (color16 << 8));
+        write_volatile(VGA_BUFFER.add(index), c16 | (color16 << 8));
     }
 }
 
