@@ -17,6 +17,11 @@ make run-kernel # runs only kernel in QEMU emulator
 - [ ] Keyboard & Mouse (PS/2)
 - [ ] ACPI
 - [ ] Threads
+- [ ] File systems (FAT32)
+- [ ] Disk management
+- [ ] Executable files
+- [ ] Basic shell
+- [ ] Internet
 - [ ] Time
 - [ ] Video graphics
 - [ ] Audio
