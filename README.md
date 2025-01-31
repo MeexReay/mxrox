@@ -30,6 +30,7 @@ Internet resources where I found most information about OS dev
 - https://gitea.bedohswe.eu.org/bedohswe/bootsector_tictactoe/
 - https://wiki.osdev.org/PS/2
 - https://os.phil-opp.com/
+- https://wiki.osdev.org/Interrupts_Tutorial
 
 ### Contributing
 

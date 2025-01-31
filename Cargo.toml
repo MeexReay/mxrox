@@ -9,6 +9,7 @@ edition = "2021"
 [dependencies]
 stable-vec = "0.4.1"
 no-std-compat = {version = "0.4.1", features = ["alloc"]}
+x86_64 = {version = "0.15.2", features = ["instructions"]}
 
 [profile.dev]
 panic = "abort"

@@ -4,6 +4,8 @@
 #![feature(lang_items)]
 #![feature(alloc_error_handler)]
 #![feature(rustc_private)]
+#![feature(abi_x86_interrupt)]
+
 
 #[lang = "eh_personality"]
 extern "C" fn eh_personality() {}
@@ -20,12 +22,13 @@ extern crate alloc;
 #[inline(never)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    show_error(info.message().as_str().unwrap_or("mxrox death"));
+    show_error(info.message().as_str().unwrap_or("Unknown Error"));
     loop {}
 }
 
 #[alloc_error_handler]
 fn oom(_layout: core::alloc::Layout) -> ! {
+    show_error("Out Of Memory");
     loop {}
 }
 
