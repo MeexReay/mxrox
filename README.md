@@ -14,15 +14,16 @@ make run-kernel # runs only kernel in QEMU emulator
 ## Roadmap
 
 - [x] Hello World
-- [ ] Keyboard & Mouse (PS/2)
-- [ ] ACPI
+- [ ] Interrupts
 - [ ] Threads
+- [ ] Keyboard
+- [ ] Basic shell
 - [ ] File systems (FAT32)
 - [ ] Disk management
 - [ ] Executable files
-- [ ] Basic shell
 - [ ] Internet
 - [ ] Time
+- [ ] Mouse
 - [ ] Video graphics
 - [ ] Audio
 
