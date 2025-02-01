@@ -1,5 +1,6 @@
-use irq::init_apic;
+use irq::init_interrupts;
 use heap::init_heap;
+use pit::init_pit;
 use ps2::init_ps2;
 use vga::{
     fill_with_color, 
@@ -13,7 +14,7 @@ use vga::{
 mod vga;
 mod ps2;
 mod irq;
-mod thread;
+mod pit;
 mod heap;
 mod util;
 
@@ -24,8 +25,9 @@ pub fn show_error(message: &str) {
 
 pub fn init_kernel() {
     init_heap(16400, 16384);
+    init_pit();
     init_ps2();
-    init_apic();
+    init_interrupts();
 
     fill_with_color(VGA_COLOR_BLACK);
 

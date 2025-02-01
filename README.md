@@ -37,6 +37,7 @@ Internet resources where I found most information about OS dev
 - https://wiki.osdev.org/PS/2
 - https://os.phil-opp.com/
 - https://wiki.osdev.org/Interrupts_Tutorial
+- https://wiki.osdev.org/Interrupt_Vector_Table
 
 ### Contributing
 

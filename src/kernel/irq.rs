@@ -1,10 +1,24 @@
 use core::ptr::write_volatile;
 use core::arch::asm;
 
-const APIC_BASE: *mut u32 = 0xFEE00000 as *mut u32;
+const APIC_BASE: u32 = 0xFEE00000;
 
-const APIC_EOI: *mut u32 = unsafe { APIC_BASE.add(0x0B0) };
-const APIC_SVR: *mut u32 = unsafe { APIC_BASE.add(0x0F0) };
+const APIC_EOI: u32 = APIC_BASE + 0x0B0;
+const APIC_SVR: u32 = APIC_BASE + 0x0F0;
+
+const PIC1_CMD: u16 = 0x20;
+const PIC1_DATA: u16 = 0x21;
+const PIC2_CMD: u16 = 0xA0;
+const PIC2_DATA: u16 = 0xA1;
+
+const ICW1_INIT: u8 = 0x10;
+const ICW1_ICW4: u8 = 0x01;
+const ICW4_8086: u8 = 0x01;
+
+const PIC_EOI: u8 = 0x20;       /* End-of-interrupt command code */
+
+const APIC_ENABLED: bool = false;
+
 
 #[repr(C, packed)]
 #[derive(Clone, Copy)]
@@ -33,9 +47,70 @@ static mut IDT: Idt = Idt {
     }; IDT_SIZE],
 };
 
-fn register_idt(handler: u32) {
+unsafe fn is_apic_available() -> bool {
+    if !APIC_ENABLED {
+        return false;
+    }
+
+    let edx: u32;
+
+    asm!(
+        "cpuid",
+        inout("eax") 1 => _,
+        lateout("edx") edx
+    );
+
+    (edx & (1 << 9)) != 0
+}
+
+unsafe fn init_idt() {
+    asm!("lidt [{}]", "sti", in(reg) &IDT as *const _);
+}
+
+unsafe fn init_apic() {
+    write_volatile(APIC_SVR as *mut u32, 0x100 | 0x1);
+}
+
+unsafe fn send_apic_eoi() {
+    write_volatile(APIC_EOI as *mut u32, 0);
+}
+
+unsafe fn send_pic_eoi(irq: usize) {
+    if irq >= 8 { write_volatile(PIC2_CMD as *mut u8, PIC_EOI); }
+    write_volatile(PIC1_CMD as *mut u8, PIC_EOI);
+}
+
+unsafe fn init_pic() {
+    write_volatile(PIC1_CMD as *mut u8, ICW1_INIT | ICW1_ICW4);
+    write_volatile(PIC2_CMD as *mut u8, ICW1_INIT | ICW1_ICW4);
+    
+    write_volatile(PIC1_DATA as *mut u8, 0x20);
+    write_volatile(PIC2_DATA as *mut u8, 0x28);
+    
+    write_volatile(PIC1_DATA as *mut u8, 4);
+    write_volatile(PIC2_DATA as *mut u8, 2);
+    
+    write_volatile(PIC1_DATA as *mut u8, ICW4_8086);
+    write_volatile(PIC2_DATA as *mut u8, ICW4_8086);
+
+    write_volatile(PIC1_DATA as *mut u8, 0xFB);
+    write_volatile(PIC2_DATA as *mut u8, 0xFF);
+}
+
+pub fn send_eoi(irq: usize) {
     unsafe {
-        let entry = &mut IDT.entries[32];
+        if is_apic_available() {
+            send_apic_eoi()
+        } else {
+            send_pic_eoi(irq)
+        }
+    }
+}
+
+/// all interrupt vectors you can find here: https://wiki.osdev.org/Interrupt_Vector_Table
+pub fn register_idt(handler: u32, int_vec: u8) {
+    unsafe {
+        let entry = &mut IDT.entries[int_vec as usize];
 
         entry.offset_low = handler as u16;
         entry.selector = 0x08;
@@ -45,24 +120,13 @@ fn register_idt(handler: u32) {
     }
 }
 
-unsafe fn load_idt() {
-    asm!("lidt [{}]", "sti", in(reg) &IDT as *const _);
-}
-
-unsafe fn enable_apic() {
-    let sv_reg = APIC_SVR as *mut u32;
-    let mut value = 0x100 | 0x1;
-    write_volatile(sv_reg, value);
-}
-
-unsafe fn send_eoi() {
-    let eoi_reg = APIC_EOI as *mut u32;
-    write_volatile(eoi_reg, 0);
-}
-
-pub fn init_apic() {
+pub fn init_interrupts() {
     unsafe {
-        load_idt();
-        enable_apic();
+        init_idt();
+        if is_apic_available() {
+            init_apic();
+        } else {
+            init_pic();
+        }
     }
 }
