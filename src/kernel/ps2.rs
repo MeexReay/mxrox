@@ -1,10 +1,8 @@
-use core::ptr::{read_volatile, write_volatile};
-
 use alloc::vec::Vec;
 
-use crate::kernel::irq::register_idt;
+use crate::kernel::interrupt::idt_set_descriptor;
 
-use super::{irq::send_eoi, pit::sleep};
+use super::{interrupt::send_eoi, terminal::log_info, time::sleep, util::*};
 
 const DATA_PORT: u16 = 0x60;
 const STATUS_PORT: u16 = 0x64;
@@ -16,23 +14,24 @@ static mut DEVICE1_TYPE: Vec<u8> = Vec::new();
 static mut DEVICE2_TYPE: Vec<u8> = Vec::new();
 
 unsafe fn send_data(data: u8) {
-    write_volatile(DATA_PORT as *mut u8, data)
+    outb(DATA_PORT, data)
 } 
 
 unsafe fn read_data() -> u8 {
-    read_volatile(DATA_PORT as *mut u8)
+    inb(DATA_PORT)
 }
 
 unsafe fn send_command(command: u8) {
-    write_volatile(STATUS_PORT as *mut u8, command)
+    outb(STATUS_PORT, command)
 } 
 
 unsafe fn read_status() -> u8 {
-    read_volatile(STATUS_PORT as *mut u8)
+    inb(STATUS_PORT)
 } 
 
 unsafe fn on_device_1_irq() {
     let data = read_data();
+    log_info(&format!("[PS/2] device 1 data: 0x{:X}", data));
     send_eoi(DEVICE1_IRQ);
 }
 
@@ -86,28 +85,43 @@ unsafe fn send_identify() -> Vec<u8> {
 }
 
 unsafe fn is_ps2_2_device_enabled() -> bool {
-    true
+    false
 }
 
 pub fn init_ps2() {
     unsafe {
         send_command(0xAD); // disable device 1
+    
+        log_info("[PS/2] Disabled device 1");
+
         if is_ps2_2_device_enabled() {
-            DEVICE2_TYPE = send_identify();
+            // DEVICE2_TYPE = send_identify();
+            log_info("[PS/2] Inspected device 2 identify");
             send_command(0xA7); // disable device 2
+            log_info("[PS/2] Disabled device 2");
         }
 
         read_data(); // flush device data
         send_command(0x60); // set CCB command
         send_command(0x000000u8); // clear CCB
 
+        log_info("[PS/2] Flush device data and clear CCB");
+
         send_command(0xAE); // enable device 1
+        log_info("[PS/2] Enable device 1");
+        // DEVICE1_TYPE = send_identify();
+        log_info("[PS/2] Inspected device 1 identify");
+
         if is_ps2_2_device_enabled() {
-            DEVICE1_TYPE = send_identify();
             send_command(0xA8); // enable device 2
+            log_info("[PS/2] Disable device 2");
+        }
+
+        idt_set_descriptor(0x21, on_device_1_irq as u32, 0x09); // bind handler for device 1
+        log_info("[PS/2] Bind handler for device 1");
+        if is_ps2_2_device_enabled() {
+            idt_set_descriptor(0x8B, on_device_2_irq as u32, 0x74); // bind handler for device 2
+            log_info("[PS/2] Bind handler for device 2");
         }
     }
-
-    register_idt(on_device_1_irq as u32, 0x09); // bind handler for device 1
-    register_idt(on_device_2_irq as u32, 0x74); // bind handler for device 2
 }

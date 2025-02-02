@@ -4,6 +4,8 @@ use core::mem;
 use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicUsize, Ordering};
 
+use super::terminal::log_info;
+
 struct FreeListNode {
     size: usize,
     next: *mut FreeListNode,
@@ -119,7 +121,9 @@ pub extern "C" fn memset(dest: *mut u8, value: i32, n: usize) -> *mut u8 {
 }
 
 pub fn init_heap(heap_start: usize, heap_size: usize) {
-    unsafe { 
+    unsafe {
         ALLOCATOR.init(heap_start, heap_size); 
     }
+
+    log_info(&format!("Heap initialized on {heap_start} with size {heap_size}"));
 }

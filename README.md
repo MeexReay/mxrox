@@ -38,6 +38,7 @@ Internet resources where I found most information about OS dev
 - https://os.phil-opp.com/
 - https://wiki.osdev.org/Interrupts_Tutorial
 - https://wiki.osdev.org/Interrupt_Vector_Table
+- https://wiki.osdev.org/Inline_Assembly/Examples#I/O_access
 
 ### Contributing
 
