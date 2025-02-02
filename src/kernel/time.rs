@@ -44,7 +44,7 @@ pub fn init_pit() {
         log_info("PIT initialized");
         log_info(&format!("{}", pit_handler as u32));
     
-        idt_set_descriptor(0x20, pit_handler as u32, 0x8E);
+        idt_set_descriptor(0x20, pit_handler as u32, 0);
         log_info("PIT registered");
         load_idt();
     

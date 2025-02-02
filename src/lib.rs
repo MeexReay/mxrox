@@ -1,10 +1,9 @@
 #![no_std]
 #![no_main]
 
-#![feature(lang_items)]
-#![feature(alloc_error_handler)]
-#![feature(rustc_private)]
-#![feature(abi_x86_interrupt)]
+#![allow(internal_features, dead_code, unused)]
+#![feature(lang_items, alloc_error_handler, rustc_private, abi_x86_interrupt)]
+
 
 
 #[lang = "eh_personality"]

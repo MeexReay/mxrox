@@ -60,12 +60,12 @@ static mut IDT: [IDTEntry; IDT_MAX_DESCRIPTORS] = [IDTEntry {
     offset_mid: 0,
 }; IDT_MAX_DESCRIPTORS];
 
-// static mut VECTORS: [bool; 32] = [false; 32];
+static mut VECTORS: [bool; 32] = [false; 32];
 static mut IDTR: IDTDescriptor = IDTDescriptor { limit: 0, base: 0 };
 
-// extern "C" {
-//     static ist_stub_table: [u32; 32];
-// }
+extern "C" {
+    static isr_stub_table: [u32; 32];
+}
 
 pub unsafe fn idt_set_descriptor(vector: u8, handler: u32, type_attr: u8) {
     IDT[vector as usize] = IDTEntry {
@@ -78,16 +78,25 @@ pub unsafe fn idt_set_descriptor(vector: u8, handler: u32, type_attr: u8) {
 }
 
 pub unsafe fn load_idt() {
-    IDTR.base = &IDT as *const _ as u32;
+    IDTR.base = &raw const IDT as *const _ as u32;
     IDTR.limit = (size_of::<IDTEntry>() * IDT_MAX_DESCRIPTORS - 1) as u16;
 
-    // for vector in 0..32 {
-    //     idt_set_descriptor(vector, ist_stub_table[vector as usize], 0x8E);
-    //     VECTORS[vector as usize] = true;
-    // }
+    for vector in 0..32 {
+        idt_set_descriptor(vector, isr_stub_table[vector as usize], 0x8E);
+        VECTORS[vector as usize] = true;
+    }
     
-    asm!("lidt [{}]", in(reg) &IDTR);
+    asm!("lidt [{}]", in(reg) &raw const IDTR);
     asm!("sti");
+}
+
+#[no_mangle]
+pub extern "C" fn exception_handler(error_type: u8) { 
+    unsafe {
+        log_error(&format!("Unknown error 0x{:X}", error_type)); 
+        asm!("cli; hlt");
+        loop {}
+    }
 }
 
 unsafe fn is_apic_available() -> bool {
@@ -104,12 +113,6 @@ unsafe fn is_apic_available() -> bool {
     );
 
     (edx & (1 << 9)) != 0
-}
-
-pub unsafe extern "C" fn exception_handler() { 
-    log_error("Unknown error"); 
-    asm!("cli; hlt");
-    loop {}
 }
 
 unsafe fn send_apic_eoi() {

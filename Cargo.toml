@@ -1,4 +1,6 @@
 [lib]
+test = false
+bench = false
 crate-type = ["staticlib"]
 
 [package]
