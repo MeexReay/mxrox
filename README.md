@@ -1,3 +1,6 @@
+> [!WARNING]
+> Migrated to my selfhost [Gitea](https://git.meex.lol/MeexReay/mxrox)
+
 # MxRox
 
 Mixray's small x86_64 OS
